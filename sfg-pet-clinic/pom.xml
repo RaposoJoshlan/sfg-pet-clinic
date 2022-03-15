@@ -42,4 +42,8 @@
 		</pluginManagement>
 	</build>
 
+	<scm>
+		<developerConnection>scm:git:git@github.com:RaposoJoshlan/sfg-pet-clinic.git</developerConnection>
+	</scm>
+
 </project>
