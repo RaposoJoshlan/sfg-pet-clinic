@@ -1,17 +1,24 @@
 package com.springframework.sfgpetclinic.model;
 
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+@Entity
+@Table(name = "owners")
 public class Owner extends Person {
 
+    @Column(name = "address")
     private String address;
 
+    @Column(name = "city")
     private String city;
 
+    @Column(name = "telephone")
     private String telephone;
 
-    private Set<Pet> petSet = new HashSet<>();
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
+    private Set<Pet> pets = new HashSet<>();
 
     public String getAddress() {
         return address;
@@ -37,12 +44,12 @@ public class Owner extends Person {
         this.telephone = telephone;
     }
 
-    public Set<Pet> getPetSet() {
-        return petSet;
+    public Set<Pet> getPets() {
+        return pets;
     }
 
-    public void setPetSet(Set<Pet> petSet) {
-        this.petSet = petSet;
+    public void setPets(Set<Pet> pets) {
+        this.pets = pets;
     }
 
 }
