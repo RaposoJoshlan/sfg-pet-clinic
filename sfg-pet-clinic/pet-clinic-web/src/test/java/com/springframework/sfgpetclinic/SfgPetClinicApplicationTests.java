@@ -9,5 +9,4 @@ class SfgPetClinicApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }
