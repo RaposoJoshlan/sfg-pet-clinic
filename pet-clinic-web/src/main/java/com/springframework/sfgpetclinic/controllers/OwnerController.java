@@ -29,11 +29,6 @@ public class OwnerController {
         dataBinder.setDisallowedFields("id");
     }
 
-//    @RequestMapping({"", "/", "/index", "/index.html"})
-//    public String listOwners(Model model) {
-//        model.addAttribute("owners", ownerService.findAll());
-//        return "owners/index";
-//    }
 
     @RequestMapping({"/find"})
     public String findOwner(Model model) {
@@ -58,7 +53,7 @@ public class OwnerController {
             owner.setLastName("");
         }
 
-        List<Owner> results = ownerService.findAllByLastNameLike(owner.getLastName());
+        List<Owner> results = ownerService.findAllByLastNameLike("%" + owner.getLastName() + "%");
 
         if (results.isEmpty()) {
             result.rejectValue("lastName", "not found", "not found");
@@ -71,6 +66,4 @@ public class OwnerController {
             return "owners/ownerList";
         }
     }
-
-
 }
