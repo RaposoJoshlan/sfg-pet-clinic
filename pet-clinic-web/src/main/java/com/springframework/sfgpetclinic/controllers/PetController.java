@@ -50,45 +50,40 @@ public class PetController {
         dataBinder.setDisallowedFields("id");
     }
 
-    @GetMapping({"/pets/new"})
+    @GetMapping("/pets/new")
     public String initCreationForm(Owner owner, Model model) {
         Pet pet = new Pet();
         owner.getPets().add(pet);
-
+        pet.setOwner(owner);
         model.addAttribute("pet", pet);
         return "pets/createOrUpdatePetForm";
     }
 
-    @PostMapping({"/pets/new"})
-    public String processCreationForm(@Validated Pet pet, Owner owner, BindingResult result, Model model) {
-        if(StringUtils.hasLength(pet.getName()) && pet.isNew() && owner.getPet(pet.getName(), true) != null) {
+    @PostMapping("/pets/new")
+    public String processCreationForm(Owner owner, @Validated Pet pet, BindingResult result, Model model) {
+        if (StringUtils.hasLength(pet.getName()) && pet.isNew() && owner.getPet(pet.getName(), true) != null){
             result.rejectValue("name", "duplicate", "already exists");
         }
-
         owner.getPets().add(pet);
-
-        if(result.hasErrors()) {
+        if (result.hasErrors()) {
             model.addAttribute("pet", pet);
             return "pets/createOrUpdatePetForm";
         } else {
             petService.save(pet);
+
             return "redirect:/owners/" + owner.getId();
         }
     }
 
-    @GetMapping({"/pets/{petId}/edit"})
-    public String initUpdateOwnerForm(@PathVariable Long petId, Model model) {
-        Pet pet = petService.findById(petId);
-
-        model.addAttribute("pet", pet);
-
+    @GetMapping("/pets/{petId}/edit")
+    public String initUpdateForm(@PathVariable Long petId, Model model) {
+        model.addAttribute("pet", petService.findById(petId));
         return "pets/createOrUpdatePetForm";
     }
 
-    @PostMapping({"/pets/{petId}/edit"})
-    public String processUpdateOwnerForm(@Validated Pet pet, Owner owner, BindingResult result, Model model, @PathVariable Long petId) {
+    @PostMapping("/pets/{petId}/edit")
+    public String processUpdateForm(@Validated Pet pet, BindingResult result, Owner owner, Model model) {
         if (result.hasErrors()) {
-            pet.setId(petId);
             pet.setOwner(owner);
             model.addAttribute("pet", pet);
             return "pets/createOrUpdatePetForm";
