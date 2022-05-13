@@ -11,6 +11,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import java.beans.PropertyEditorSupport;
+import java.time.LocalDate;
+
 /**
  * Created on 27/04/2022
  */
@@ -28,8 +31,15 @@ public class VisitController {
     }
 
     @InitBinder
-    public void setAllowedFields(WebDataBinder dataBinder) {
+    public void dataBinder(WebDataBinder dataBinder) {
         dataBinder.setDisallowedFields("id");
+
+        dataBinder.registerCustomEditor(LocalDate.class, new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) throws IllegalArgumentException{
+                setValue(LocalDate.parse(text));
+            }
+        });
     }
 
     /**
@@ -60,7 +70,7 @@ public class VisitController {
 
     // Spring MVC calls method loadPetWithVisit(...) before processNewVisitForm is called
     @PostMapping("/{ownerId}/pets/{petId}/visits/new")
-    public String processNewVisitForm(@Validated Visit visit, BindingResult result) {
+    public String processNewVisitForm(@Validated Visit visit, BindingResult result, @PathVariable Long ownerId, @PathVariable Long petId) {
         if (result.hasErrors()) {
             return "pets/createOrUpdateVisitForm";
         } else {
