@@ -7,22 +7,20 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
-
-import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -96,10 +94,11 @@ class OwnerControllerTest {
                         Owner.builder().id(2l).build()));
 
         mockMvc.perform(get("/owners")
-                        .param("lastName",""))
+                        .param("lastName", ""))
                 .andExpect(status().isOk())
                 .andExpect(view().name("owners/ownerList"))
-                .andExpect(model().attribute("selections", hasSize(2)));;
+                .andExpect(model().attribute("selections", hasSize(2)));
+        ;
     }
 
     @Test
@@ -116,7 +115,12 @@ class OwnerControllerTest {
     void processCreationForm() throws Exception {
         when(ownerService.save(any())).thenReturn(Owner.builder().id(1L).build());
 
-        mockMvc.perform(post("/owners/new"))
+        mockMvc.perform(post("/owners/new")
+                        .param("firstName", "name")
+                        .param("lastName", "name")
+                        .param("address", "address")
+                        .param("city", "city")
+                        .param("telephone", "123434556"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/owners/1"))
                 .andExpect(model().attributeExists("owner"));
@@ -140,7 +144,11 @@ class OwnerControllerTest {
     void processUpdateOwnerForm() throws Exception {
         when(ownerService.save(any())).thenReturn(Owner.builder().id(1L).build());
 
-        mockMvc.perform(post("/owners/1/edit"))
+        mockMvc.perform(post("/owners/1/edit").param("firstName", "name")
+                        .param("lastName", "name")
+                        .param("address", "address")
+                        .param("city", "city")
+                        .param("telephone", "123434556"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/owners/1"))
                 .andExpect(model().attributeExists("owner"));
