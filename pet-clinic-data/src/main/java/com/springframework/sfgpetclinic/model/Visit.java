@@ -1,6 +1,7 @@
 package com.springframework.sfgpetclinic.model;
 
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -11,7 +12,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Entity
 @Table(name = "visits")
-public class Visit extends BaseEntity{
+public class Visit extends BaseEntity {
 
     @Builder
     public Visit(Long id, LocalDate date, String description, Pet pet) {
@@ -22,6 +23,7 @@ public class Visit extends BaseEntity{
     }
 
     @Column(name = "date")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 
     @Column(name = "description")
