@@ -2,6 +2,7 @@ package com.springframework.sfgpetclinic.controllers;
 
 import com.springframework.sfgpetclinic.model.Pet;
 import com.springframework.sfgpetclinic.model.Visit;
+import com.springframework.sfgpetclinic.model_commands.VisitCmd;
 import com.springframework.sfgpetclinic.services.PetService;
 import com.springframework.sfgpetclinic.services.VisitService;
 import org.springframework.stereotype.Controller;
@@ -43,7 +44,7 @@ public class VisitController {
      * @return Pet
      */
     @ModelAttribute("visit")
-    public Visit loadPetWithVisit(@PathVariable Long petId, Model model) {
+    public Visit loadPetWithVisit(@PathVariable String petId, Model model) {
         Pet pet = petService.findById(petId);
         model.addAttribute("pet", pet);
         Visit visit = new Visit();
@@ -54,17 +55,17 @@ public class VisitController {
 
     // Spring MVC calls method loadPetWithVisit(...) before initNewVisitForm is called
     @GetMapping("/*/pets/{petId}/visits/new")
-    public String initNewVisitForm(@PathVariable Long petId, Model model) {
+    public String initNewVisitForm(@PathVariable String petId, Model model) {
         return "pets/createOrUpdateVisitForm";
     }
 
     // Spring MVC calls method loadPetWithVisit(...) before processNewVisitForm is called
     @PostMapping("/{ownerId}/pets/{petId}/visits/new")
-    public String processNewVisitForm(@Validated Visit visit, BindingResult result) {
+    public String processNewVisitForm(@Validated VisitCmd visit, BindingResult result) {
         if (result.hasErrors()) {
             return "pets/createOrUpdateVisitForm";
         } else {
-            visitService.save(visit);
+            visitService.saveVisit(visit);
 
             return "redirect:/owners/{ownerId}";
         }

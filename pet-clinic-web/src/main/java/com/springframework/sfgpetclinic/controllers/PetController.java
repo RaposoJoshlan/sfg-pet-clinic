@@ -3,6 +3,8 @@ package com.springframework.sfgpetclinic.controllers;
 import com.springframework.sfgpetclinic.model.Owner;
 import com.springframework.sfgpetclinic.model.Pet;
 import com.springframework.sfgpetclinic.model.PetType;
+import com.springframework.sfgpetclinic.model_commands.OwnerCmd;
+import com.springframework.sfgpetclinic.model_commands.PetCmd;
 import com.springframework.sfgpetclinic.services.OwnerService;
 import com.springframework.sfgpetclinic.services.PetService;
 import com.springframework.sfgpetclinic.services.PetTypeService;
@@ -41,8 +43,8 @@ public class PetController {
     }
 
     @ModelAttribute("owner")
-    public Owner findOwner(@PathVariable Long ownerId) {
-        return ownerService.findById(ownerId);
+    public OwnerCmd findOwner(@PathVariable String ownerId) {
+        return ownerService.findCommandById(ownerId);
     }
 
     @InitBinder("owner")
@@ -51,8 +53,8 @@ public class PetController {
     }
 
     @GetMapping("/pets/new")
-    public String initCreationForm(Owner owner, Model model) {
-        Pet pet = new Pet();
+    public String initCreationForm(OwnerCmd owner, Model model) {
+        PetCmd pet = new PetCmd();
         owner.getPets().add(pet);
         pet.setOwner(owner);
         model.addAttribute("pet", pet);
@@ -60,36 +62,37 @@ public class PetController {
     }
 
     @PostMapping("/pets/new")
-    public String processCreationForm(Owner owner, @Validated Pet pet, BindingResult result, Model model) {
-        if (StringUtils.hasLength(pet.getName()) && pet.isNew() && owner.getPet(pet.getName(), true) != null){
-            result.rejectValue("name", "duplicate", "already exists");
-        }
-        owner.getPets().add(pet);
+    public String processCreationForm(OwnerCmd ownerCmd, @Validated PetCmd pet, BindingResult result, Model model) {
+//        if (StringUtils.hasLength(pet.getName()) && pet.isNew() && owner.getPet(pet.getName(), true) != null){
+//            result.rejectValue("name", "duplicate", "already exists");
+//        }
+        ownerCmd.getPets().add(pet);
         if (result.hasErrors()) {
             model.addAttribute("pet", pet);
             return "pets/createOrUpdatePetForm";
         } else {
-            petService.save(pet);
 
-            return "redirect:/owners/" + owner.getId();
+            petService.savePet(pet);
+
+            return "redirect:/owners/" + ownerCmd.getId();
         }
     }
 
     @GetMapping("/pets/{petId}/edit")
-    public String initUpdateForm(@PathVariable Long petId, Model model) {
-        model.addAttribute("pet", petService.findById(petId));
+    public String initUpdateForm(@PathVariable String petId, Model model) {
+        model.addAttribute("pet", petService.findCommandById(petId));
         return "pets/createOrUpdatePetForm";
     }
 
     @PostMapping("/pets/{petId}/edit")
-    public String processUpdateForm(@Validated Pet pet, BindingResult result, Owner owner, Model model) {
+    public String processUpdateForm(@Validated PetCmd pet, BindingResult result, OwnerCmd owner, Model model) {
         if (result.hasErrors()) {
             pet.setOwner(owner);
             model.addAttribute("pet", pet);
             return "pets/createOrUpdatePetForm";
         } else {
             pet.setOwner(owner);
-            petService.save(pet);
+            petService.savePet(pet);
             return "redirect:/owners/" + owner.getId();
         }
     }

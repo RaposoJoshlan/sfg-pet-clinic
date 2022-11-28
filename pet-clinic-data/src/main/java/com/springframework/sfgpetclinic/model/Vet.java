@@ -1,8 +1,9 @@
 package com.springframework.sfgpetclinic.model;
 
 import lombok.*;
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,19 +11,15 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "vets")
+@Document(collection = "vets")
 public class Vet extends Person{
 
     @Builder
-    public Vet(Long id, String firstName, String lastName, Set<Speciality> specialities) {
+    public Vet(ObjectId id, String firstName, String lastName, Set<Speciality> specialities) {
         super(id, firstName, lastName);
         this.specialities = specialities;
     }
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "vet_specialities", joinColumns = @JoinColumn(name = "vet_id"), inverseJoinColumns =
-    @JoinColumn(name = "speciality_id"))
     private Set<Speciality> specialities = new HashSet<>();
 
 }

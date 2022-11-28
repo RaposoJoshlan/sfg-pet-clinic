@@ -2,6 +2,7 @@ package com.springframework.sfgpetclinic.controllers;
 
 import com.springframework.sfgpetclinic.model.Vet;
 import com.springframework.sfgpetclinic.services.VetService;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,8 +37,8 @@ class VetControllerTest {
     @BeforeEach
     void setUp() {
         vets = new HashSet<>();
-        vets.add(Vet.builder().id(1L).build());
-        vets.add(Vet.builder().id(2L).build());
+        vets.add(Vet.builder().id(new ObjectId("5db6ce13f74c7f9f982f2596")).build());
+        vets.add(Vet.builder().id(new ObjectId("5db6ce13f74c7f9f982f2597")).build());
 
         mockMvc = MockMvcBuilders
                 .standaloneSetup(controller)

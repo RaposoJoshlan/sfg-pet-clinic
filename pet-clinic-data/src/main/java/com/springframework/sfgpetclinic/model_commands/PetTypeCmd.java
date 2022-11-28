@@ -1,7 +1,6 @@
-package com.springframework.sfgpetclinic.model;
+package com.springframework.sfgpetclinic.model_commands;
 
 import lombok.*;
-import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 
@@ -9,11 +8,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "pet_types")
-public class PetType extends BaseEntity{
+public class PetTypeCmd extends BaseEntityCmd {
 
     @Builder
-    public PetType(ObjectId id, String name) {
+    public PetTypeCmd(String id, String name) {
         super(id);
         this.name = name;
     }

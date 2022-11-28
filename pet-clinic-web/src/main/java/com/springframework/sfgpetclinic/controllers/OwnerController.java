@@ -1,6 +1,7 @@
 package com.springframework.sfgpetclinic.controllers;
 
 import com.springframework.sfgpetclinic.model.Owner;
+import com.springframework.sfgpetclinic.model_commands.OwnerCmd;
 import com.springframework.sfgpetclinic.services.OwnerService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,10 +38,10 @@ public class OwnerController {
     }
 
     @GetMapping({"/{ownerId}"})
-    public ModelAndView displayOwners(@PathVariable Long ownerId) {
+    public ModelAndView displayOwners(@PathVariable String ownerId) {
         ModelAndView mav = new ModelAndView("owners/ownerDetails");
 
-        mav.addObject(ownerService.findById(ownerId));
+        mav.addObject(ownerService.findCommandById(ownerId));
 
         return mav;
     }
@@ -52,13 +53,14 @@ public class OwnerController {
         }
 
         List<Owner> results = ownerService.findAllByLastNameLike("%" + owner.getLastName() + "%");
+        System.out.println(results);
 
         if (results.isEmpty()) {
             result.rejectValue("lastName", "not found", "not found");
             return "owners/findOwners";
         } else if (results.size() == 1) {
             owner = results.get(0);
-            return "redirect:/owners/" + owner.getId();
+            return "redirect:/owners/" + owner.getId().toHexString();
         } else {
             model.addAttribute("selections", results);
             return "owners/ownerList";
@@ -73,18 +75,18 @@ public class OwnerController {
     }
 
     @PostMapping({"/new"})
-    public String processCreationForm(@Validated Owner owner, BindingResult result) {
+    public String processCreationForm(@Validated OwnerCmd ownerCmd, BindingResult result) {
         if(result.hasErrors()) {
             return "owners/createOrUpdateOwnerForm";
         } else {
-            Owner savedOwner =  ownerService.save(owner);
+            Owner savedOwner =  ownerService.saveOwner(ownerCmd);
             return "redirect:/owners/" + savedOwner.getId();
         }
     }
 
     @GetMapping({"/{ownerId}/edit"})
-    public String initUpdateOwnerForm(@PathVariable Long ownerId, Model model) {
-        Owner owner = ownerService.findById(ownerId);
+    public String initUpdateOwnerForm(@PathVariable String ownerId, Model model) {
+        OwnerCmd owner = ownerService.findCommandById(ownerId);
 
         model.addAttribute(owner);
 
@@ -92,13 +94,13 @@ public class OwnerController {
     }
 
     @PostMapping({"/{ownerId}/edit"})
-    public String processUpdateOwnerForm(@Validated Owner owner, BindingResult result,
-                                         @PathVariable Long ownerId) {
+    public String processUpdateOwnerForm(@Validated OwnerCmd ownerCmd, BindingResult result,
+                                         @PathVariable String ownerId) {
         if (result.hasErrors()) {
             return "owners/createOrUpdateOwnerForm";
         } else {
-            owner.setId(ownerId);
-            Owner savedOwner = ownerService.save(owner);
+            ownerCmd.setId(ownerId);
+            Owner savedOwner = ownerService.saveOwner(ownerCmd);
             savedOwner.getId();
             return "redirect:/owners/" + savedOwner.getId();
         }

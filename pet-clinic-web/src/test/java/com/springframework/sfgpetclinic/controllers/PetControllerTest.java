@@ -3,9 +3,12 @@ package com.springframework.sfgpetclinic.controllers;
 import com.springframework.sfgpetclinic.model.Owner;
 import com.springframework.sfgpetclinic.model.Pet;
 import com.springframework.sfgpetclinic.model.PetType;
+import com.springframework.sfgpetclinic.model_commands.OwnerCmd;
+import com.springframework.sfgpetclinic.model_commands.PetCmd;
 import com.springframework.sfgpetclinic.services.OwnerService;
 import com.springframework.sfgpetclinic.services.PetService;
 import com.springframework.sfgpetclinic.services.PetTypeService;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,6 +47,7 @@ class PetControllerTest {
     PetController petController;
 
     Owner owner;
+    OwnerCmd ownerCmd;
 
     Set<PetType> petTypes;
 
@@ -51,10 +55,11 @@ class PetControllerTest {
 
     @BeforeEach
     void setUp() {
-        owner = Owner.builder().id(1L).build();
+        owner = Owner.builder().id(new ObjectId("5db6ce13f74c7f9f982f2596")).build();
+        ownerCmd = OwnerCmd.builder().id("5db6ce13f74c7f9f982f2596").build();
         petTypes = new HashSet<>();
-        petTypes.add(PetType.builder().id(1L).name("Dog").build());
-        petTypes.add(PetType.builder().id(2L).name("Cat").build());
+        petTypes.add(PetType.builder().id(new ObjectId("5db6ce13f74c7f9f982f2596")).name("Dog").build());
+        petTypes.add(PetType.builder().id(new ObjectId("5db6ce13f74c7f9f982f2596")).name("Cat").build());
 
         mockMvc = MockMvcBuilders
                 .standaloneSetup(petController)
@@ -63,10 +68,10 @@ class PetControllerTest {
 
     @Test
     void initCreationForm() throws Exception {
-        when(ownerService.findById(anyLong())).thenReturn(owner);
+        when(ownerService.findCommandById(anyString())).thenReturn(ownerCmd);
         when(petTypeService.findAll()).thenReturn(petTypes);
 
-        mockMvc.perform(get("/owners/1/pets/new"))
+        mockMvc.perform(get("/owners/5db6ce13f74c7f9f982f2596/pets/new"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("pets/createOrUpdatePetForm"))
                 .andExpect(model().attributeExists("owner"))
@@ -77,23 +82,23 @@ class PetControllerTest {
 
     @Test
     void processCreationForm() throws Exception {
-        when(ownerService.findById(anyLong())).thenReturn(owner);
+        when(ownerService.findCommandById(anyString())).thenReturn(ownerCmd);
         when(petTypeService.findAll()).thenReturn(petTypes);
 
-        mockMvc.perform(post("/owners/1/pets/new"))
+        mockMvc.perform(post("/owners/5db6ce13f74c7f9f982f2596/pets/new"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/owners/1"));
+                .andExpect(view().name("redirect:/owners/5db6ce13f74c7f9f982f2596"));
 
-        verify(petService).save(any());
+        verify(petService).savePet(any());
     }
 
     @Test
     void initUpdateOwnerForm() throws Exception {
-        when(ownerService.findById(anyLong())).thenReturn(owner);
+        when(ownerService.findCommandById(anyString())).thenReturn(ownerCmd);
         when(petTypeService.findAll()).thenReturn(petTypes);
-        when(petService.findById(anyLong())).thenReturn(Pet.builder().id(2L).build());
+        when(petService.findCommandById(anyString())).thenReturn(PetCmd.builder().id("5db6ce13f74c7f9f982f2598").build());
 
-        mockMvc.perform(get("/owners/1/pets/2/edit"))
+        mockMvc.perform(get("/owners/5db6ce13f74c7f9f982f2596/pets/5db6ce13f74c7f9f982f2598/edit"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("pets/createOrUpdatePetForm"))
                 .andExpect(model().attributeExists("owner"))
@@ -104,14 +109,14 @@ class PetControllerTest {
 
     @Test
     void processUpdateForm() throws Exception {
-        when(ownerService.findById(anyLong())).thenReturn(owner);
+        when(ownerService.findCommandById(anyString())).thenReturn(ownerCmd);
         when(petTypeService.findAll()).thenReturn(petTypes);
 
-        mockMvc.perform(post("/owners/1/pets/2/edit"))
+        mockMvc.perform(post("/owners/5db6ce13f74c7f9f982f2596/pets/5db6ce13f74c7f9f982f2598/edit"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/owners/1"));
+                .andExpect(view().name("redirect:/owners/5db6ce13f74c7f9f982f2596"));
 
-        verify(petService).save(any());
+        verify(petService).savePet(any());
     }
 
     @Test

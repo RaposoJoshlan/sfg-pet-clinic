@@ -1,10 +1,9 @@
-package com.springframework.sfgpetclinic.model;
+package com.springframework.sfgpetclinic.model_commands;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 
 import java.io.Serializable;
@@ -13,10 +12,10 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BaseEntity implements Serializable {
+public class BaseEntityCmd implements Serializable {
 
     @Id
-    private ObjectId id;
+    private String id;
 
     public boolean isNew() {
         return this.id == null;

@@ -1,19 +1,18 @@
-package com.springframework.sfgpetclinic.model;
+package com.springframework.sfgpetclinic.model_commands;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.bson.types.ObjectId;
 
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Person extends BaseEntity {
+public class PersonCmd extends BaseEntityCmd {
 
-    public Person(ObjectId id, String firstName, String lastName) {
+    public PersonCmd(String id, String firstName, String lastName) {
         super(id);
         this.firstName = firstName;
         this.lastName = lastName;

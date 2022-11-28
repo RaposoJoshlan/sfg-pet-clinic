@@ -1,7 +1,7 @@
-package com.springframework.sfgpetclinic.model;
+package com.springframework.sfgpetclinic.model_commands;
 
+import com.springframework.sfgpetclinic.model.Visit;
 import lombok.*;
-import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
@@ -12,26 +12,23 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "pets")
-public class Pet extends BaseEntity{
+public class PetCmd extends BaseEntityCmd {
 
      @Builder
-     public Pet(ObjectId id, String name, PetType petType, Owner owner, LocalDate birthDate, Set<Visit> visits) {
+     public PetCmd(String id, String name, PetTypeCmd petType, OwnerCmd owner, LocalDate birthDate) {
           super(id);
           this.name = name;
           this.petType = petType;
           this.owner = owner;
           this.birthDate = birthDate;
-          if (visits == null || visits.size() > 0) this.visits = visits;
      }
 
      private String name;
 
-     private PetType petType;
+     private PetTypeCmd petType;
 
-     private Owner owner;
+     private OwnerCmd owner;
 
      private LocalDate birthDate;
 
-     private Set<Visit> visits = new HashSet<>();
 }

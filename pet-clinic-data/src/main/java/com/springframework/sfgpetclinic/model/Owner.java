@@ -1,8 +1,9 @@
 package com.springframework.sfgpetclinic.model;
 
 import lombok.*;
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,12 +11,12 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "owners")
+@Document(collection = "owners")
 public class Owner extends Person {
 
     @Builder
-    public Owner(Long id, String firstName, String lastName, String address, String city, String telephone, Set<Pet> pets) {
+    public Owner(ObjectId id, String firstName, String lastName, String address, String city, String telephone,
+                 Set<Pet> pets) {
         super(id, firstName, lastName);
         this.address = address;
         this.city = city;
@@ -23,16 +24,12 @@ public class Owner extends Person {
         if (pets != null) this.pets = pets;
     }
 
-    @Column(name = "address")
     private String address;
 
-    @Column(name = "city")
     private String city;
 
-    @Column(name = "telephone")
     private String telephone;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
     private Set<Pet> pets = new HashSet<>();
 
 
@@ -65,5 +62,4 @@ public class Owner extends Person {
         }
         return null;
     }
-
 }

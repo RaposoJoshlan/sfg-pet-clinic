@@ -1,28 +1,28 @@
 package com.springframework.sfgpetclinic.controllers;
 
 import com.springframework.sfgpetclinic.model.Owner;
+import com.springframework.sfgpetclinic.model_commands.OwnerCmd;
 import com.springframework.sfgpetclinic.services.OwnerService;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
-
-import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,8 +41,8 @@ class OwnerControllerTest {
     @BeforeEach
     void setUp() {
         owners = new HashSet<>();
-        owners.add(Owner.builder().id(1L).build());
-        owners.add(Owner.builder().id(2L).build());
+        owners.add(Owner.builder().id(new ObjectId("5db6ce13f74c7f9f982f2598")).build());
+        owners.add(Owner.builder().id(new ObjectId("5db6ce13f74c7f9f982f2599")).build());
 
         mockMvc = MockMvcBuilders
                 .standaloneSetup(controller)
@@ -61,18 +61,19 @@ class OwnerControllerTest {
 
     @Test
     void displayOwners() throws Exception {
-        when(ownerService.findById(anyLong())).thenReturn(Owner.builder().id(1L).build());
+        when(ownerService.findCommandById(anyString())).thenReturn(OwnerCmd.builder().id("5db6ce13f74c7f9f982f2598").build());
 
-        mockMvc.perform(get("/owners/123"))
+        mockMvc.perform(get("/owners/5db6ce13f74c7f9f982f2598"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("owners/ownerDetails"))
-                .andExpect(model().attribute("owner", hasProperty("id", is(1L))));
+                .andExpect(model().attribute("ownerCmd", hasProperty("id",
+                        is("5db6ce13f74c7f9f982f2598"))));
     }
 
     @Test
     void processFindFormReturnMany() throws Exception {
-        when(ownerService.findAllByLastNameLike(anyString())).thenReturn(Arrays.asList(Owner.builder().id(1L).build()
-                , Owner.builder().id(2L).build()));
+        when(ownerService.findAllByLastNameLike(anyString())).thenReturn(Arrays.asList(Owner.builder().id(new ObjectId("5db6ce13f74c7f9f982f2598")).build()
+                , Owner.builder().id(new ObjectId("5db6ce13f74c7f9f982f2598")).build()));
 
         mockMvc.perform(get("/owners"))
                 .andExpect(status().isOk())
@@ -82,11 +83,11 @@ class OwnerControllerTest {
 
     @Test
     void processFindFormReturnOne() throws Exception {
-        when(ownerService.findAllByLastNameLike(anyString())).thenReturn(Arrays.asList(Owner.builder().id(1L).build()));
+        when(ownerService.findAllByLastNameLike(anyString())).thenReturn(Arrays.asList(Owner.builder().id(new ObjectId("5db6ce13f74c7f9f982f2598")).build()));
 
         mockMvc.perform(get("/owners"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/owners/1"));
+                .andExpect(view().name("redirect:/owners/5db6ce13f74c7f9f982f2598"));
     }
 
     @Test
@@ -101,38 +102,38 @@ class OwnerControllerTest {
 
     @Test
     void processCreationForm() throws Exception {
-        when(ownerService.save(any())).thenReturn(Owner.builder().id(1L).build());
+        when(ownerService.saveOwner(any())).thenReturn(Owner.builder().id(new ObjectId("5db6ce13f74c7f9f982f2598")).build());
 
         mockMvc.perform(post("/owners/new"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/owners/1"))
-                .andExpect(model().attributeExists("owner"));
+                .andExpect(view().name("redirect:/owners/5db6ce13f74c7f9f982f2598"))
+                .andExpect(model().attributeExists("ownerCmd"));
 
-        verify(ownerService).save(any());
+        verify(ownerService).saveOwner(any());
     }
 
     @Test
     void initUpdateOwnerForm() throws Exception {
-        when(ownerService.findById(anyLong())).thenReturn(Owner.builder().id(1L).build());
+        when(ownerService.findCommandById(anyString())).thenReturn(OwnerCmd.builder().id("5db6ce13f74c7f9f982f2598").build());
 
-        mockMvc.perform(get("/owners/1/edit"))
+        mockMvc.perform(get("/owners/5db6ce13f74c7f9f982f2598/edit"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("owners/createOrUpdateOwnerForm"))
-                .andExpect(model().attributeExists("owner"));
+                .andExpect(model().attributeExists("ownerCmd"));
 
         verifyNoMoreInteractions(ownerService);
     }
 
     @Test
     void processUpdateOwnerForm() throws Exception {
-        when(ownerService.save(any())).thenReturn(Owner.builder().id(1L).build());
+        when(ownerService.saveOwner(any())).thenReturn(Owner.builder().id(new ObjectId("5db6ce13f74c7f9f982f2598")).build());
 
-        mockMvc.perform(post("/owners/1/edit"))
+        mockMvc.perform(post("/owners/5db6ce13f74c7f9f982f2598/edit"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/owners/1"))
-                .andExpect(model().attributeExists("owner"));
+                .andExpect(view().name("redirect:/owners/5db6ce13f74c7f9f982f2598"))
+                .andExpect(model().attributeExists("ownerCmd"));
 
-        verify(ownerService).save(any());
+        verify(ownerService).saveOwner(any());
     }
 
 }
