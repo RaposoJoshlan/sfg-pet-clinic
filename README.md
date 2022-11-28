@@ -11,7 +11,7 @@ find easy if gone missing with pet, owner, vet details found through this websit
 ### Tech Stack
 
 * Spring boot java
-* thymleaf (frontend)
+* Thymleaf (frontend)
 * CircleCi for continuous integration and testing
 * H2 in-memory database.
 
