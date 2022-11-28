@@ -4,8 +4,8 @@
 
 ### Business Goal
 
-This is a Full stack Java web application named Pet Clinic where pet owner can register their pets. This application is
-built with an end goal of making Pet management easy for local community when it comes to making pet
+This is a Full stack Java web application named Pet Clinic where pet owners can register their pets. This application is
+built with an end goal of making pet management easy for local community when it comes to making pet
 find easy if gone missing with pet, owner, vet details found through this website.
 
 ### Tech Stack
