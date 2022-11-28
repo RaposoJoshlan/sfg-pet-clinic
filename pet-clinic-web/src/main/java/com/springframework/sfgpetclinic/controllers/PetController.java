@@ -61,9 +61,10 @@ public class PetController {
 
     @PostMapping("/pets/new")
     public String processCreationForm(Owner owner, @Validated Pet pet, BindingResult result, Model model) {
-        if (StringUtils.hasLength(pet.getName()) && pet.isNew() && owner.getPet(pet.getName(), true) != null){
+        if (StringUtils.hasLength(pet.getName()) && pet.isNew() && owner.getPet(pet.getName(), true) != null) {
             result.rejectValue("name", "duplicate", "already exists");
         }
+        pet.setOwner(owner);
         owner.getPets().add(pet);
         if (result.hasErrors()) {
             model.addAttribute("pet", pet);
